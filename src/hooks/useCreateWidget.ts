@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import type { WidgetConfig } from '../types';
+import type { WidgetConfig } from '../widget/types';
 
 interface CreateWidgetResponse {
   widgetId: string;

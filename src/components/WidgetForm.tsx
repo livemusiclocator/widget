@@ -1,7 +1,7 @@
 import React from 'react';
 import { Music2, Mail, Building2, MapPin, Layout, Calendar, Ruler, Settings2 } from 'lucide-react';
 import { useWidgetForm } from '../hooks/useWidgetForm';
-import type { WidgetConfig } from '../types';
+import type { WidgetConfig } from '../widget/types';
 
 interface WidgetFormProps {
   onSubmit: (config: WidgetConfig) => void;

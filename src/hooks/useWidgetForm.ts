@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { WidgetConfig } from '../types';
+import type { WidgetConfig } from '../widget/types';
 
 interface UseWidgetFormProps {
   onSubmit: (config: WidgetConfig) => void;
