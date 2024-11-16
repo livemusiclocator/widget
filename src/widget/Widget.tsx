@@ -1,35 +1,31 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { MapPin, Clock, Tag, Ticket } from 'lucide-react';
-import { format } from 'date-fns';
-import type { Gig, WidgetConfig } from './types';
+import { format, parseISO } from 'date-fns';
+import type { Gig } from './types';
+import type { WidgetConfig } from '../types';
+import { GigList } from './GigList';
 
-async function fetchGigs(location: string, timeFrame: string): Promise<Gig[]> {
-  const today = new Date();
-  let dateTo = new Date();
+async function fetchGigs(location: string, timeFrame: string) {
+  const today = format(new Date(), 'yyyy-MM-dd');
+  let dateTo = today;
   
   switch (timeFrame) {
-    case 'tonight':
-      // Keep same day
-      break;
     case 'tomorrow':
-      dateTo.setDate(today.getDate() + 1);
+      dateTo = format(parseISO(today).setDate(parseISO(today).getDate() + 1), 'yyyy-MM-dd');
       break;
     case 'weekend':
-      // Find next Friday and Saturday
-      const dayOfWeek = today.getDay();
-      const daysUntilFriday = (5 + 7 - dayOfWeek) % 7;
-      dateTo.setDate(today.getDate() + daysUntilFriday + 1); // Include Saturday
+      // Calculate next weekend
+      const dayOfWeek = parseISO(today).getDay();
+      const daysUntilWeekend = dayOfWeek <= 5 ? 5 - dayOfWeek : 6;
+      dateTo = format(parseISO(today).setDate(parseISO(today).getDate() + daysUntilWeekend + 1), 'yyyy-MM-dd');
       break;
   }
 
   const response = await fetch(
-    `https://api.lml.live/gigs/query?` +
-    `location=${encodeURIComponent(location)}&` +
-    `date_from=${format(today, 'yyyy-MM-dd')}&` +
-    `date_to=${format(dateTo, 'yyyy-MM-dd')}`
+    `https://api.lml.live/gigs/query?location=${encodeURIComponent(location)}&date_from=${today}&date_to=${dateTo}`
   );
-
+  
   if (!response.ok) {
     throw new Error('Failed to fetch gigs');
   }
@@ -37,41 +33,50 @@ async function fetchGigs(location: string, timeFrame: string): Promise<Gig[]> {
   return response.json();
 }
 
-interface WidgetProps {
-  config: WidgetConfig;
-}
-
-export function Widget({ config }: WidgetProps) {
+export function Widget({ config }: { config: WidgetConfig }) {
   const { data: gigs, isLoading, error } = useQuery({
-    queryKey: ['gigs', config.location, config.timeFrame],
+    queryKey: ['gigs', config.location, config.timeFrame, config.range],
     queryFn: () => fetchGigs(config.location, config.timeFrame),
-    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+    staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
 
+  const timeFrameText = React.useMemo(() => {
+    switch (config.timeFrame) {
+      case 'tonight':
+        return "Tonight's Gigs";
+      case 'tomorrow':
+        return "Today & Tomorrow's Gigs";
+      case 'weekend':
+        return "Weekend Gigs";
+      default:
+        return "Live Music";
+    }
+  }, [config.timeFrame]);
+
   if (isLoading) {
     return (
-      <div className="min-h-[200px] flex items-center justify-center text-gray-600">
-        <div className="animate-pulse">Loading gigs...</div>
+      <div className="p-8 text-center text-gray-500">
+        Loading gigs...
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-[200px] flex items-center justify-center text-red-600">
-        <div>Failed to load gigs. Please try again later.</div>
+      <div className="p-8 text-center text-red-500">
+        Failed to load gigs. Please try again later.
       </div>
     );
   }
 
-  const timeFrameText = {
-    tonight: "Tonight's Gigs",
-    tomorrow: "Today & Tomorrow's Gigs",
-    weekend: "Weekend Gigs",
-  }[config.timeFrame];
-
-  const displayGigs = (gigs || []).slice(0, config.depth);
+  if (!gigs?.length) {
+    return (
+      <div className="p-8 text-center text-gray-500">
+        No gigs found for this time period.
+      </div>
+    );
+  }
 
   return (
     <div className={`p-4 ${config.design === 'minimal' ? 'bg-white' : 'bg-gray-50'}`}>
@@ -80,85 +85,28 @@ export function Widget({ config }: WidgetProps) {
           {timeFrameText}
         </h2>
         <span className="text-sm text-brand-blue flex items-center gap-1">
-          <MapPin className="w-4 h-4" /> {config.range}km radius
+          <MapPin className="w-4 h-4" /> 
+          {typeof config.range === 'number' ? 
+            `${config.range < 1 ? config.range * 1000 + 'm' : config.range + 'km'} radius` 
+            : '10km radius'}
         </span>
       </div>
 
-      <div className="space-y-4">
-        {displayGigs.map((gig) => (
-          <div 
-            key={gig.id}
-            className={`
-              ${config.design === 'minimal' 
-                ? 'border-t border-gray-100 pt-4 first:border-t-0 first:pt-0' 
-                : 'bg-white p-4 rounded-lg shadow-sm'
-              }
-            `}
-          >
-            <div className="flex justify-between items-start gap-4">
-              <div className="flex-1 min-w-0">
-                {config.displayElements.artistName && (
-                  <h3 className="font-medium text-gray-900 truncate">
-                    {gig.name}
-                  </h3>
-                )}
-                
-                {config.displayElements.venue && (
-                  <a 
-                    href={gig.venue.location_url || '#'} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-sm text-gray-600 hover:text-brand-blue flex items-center gap-1 mt-1"
-                  >
-                    <MapPin className="w-3 h-3" />
-                    {gig.venue.name}
-                  </a>
-                )}
-
-                {config.displayElements.time && (
-                  <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
-                    <Clock className="w-3 h-3" />
-                    {new Date(`1970-01-01T${gig.start_time}`).toLocaleTimeString('en-US', {
-                      hour: 'numeric',
-                      minute: '2-digit',
-                    })}
-                  </p>
-                )}
-
-                {config.displayElements.genre && gig.genre_tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {gig.genre_tags.map(tag => (
-                      <span 
-                        key={tag}
-                        className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-brand-blue bg-opacity-10 text-brand-blue"
-                      >
-                        <Tag className="w-3 h-3 mr-1" />
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {config.displayElements.price && gig.prices.length > 0 && (
-                <div className="text-right">
-                  <span className="inline-flex items-center text-sm font-medium text-gray-900">
-                    <Ticket className="w-3 h-3 mr-1" />
-                    {gig.prices[0].amount} {gig.prices[0].currency}
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
+      <GigList 
+        gigs={gigs} 
+        config={config}
+        userLocation={config.coordinates ? 
+          { lat: config.coordinates.lat, lon: config.coordinates.lng } : 
+          undefined
+        }
+      />
 
       <div className="mt-4 text-center">
         <a 
-          href={`https://lml.live/gigs?location=${encodeURIComponent(config.location)}`}
-          target="_blank"
+          href="https://lml.live" 
+          target="_blank" 
           rel="noopener noreferrer"
-          className="text-xs text-gray-500 hover:text-brand-blue transition-colors"
+          className="text-xs text-gray-400 hover:text-brand-blue"
         >
           Powered by Live Music Locator
         </a>

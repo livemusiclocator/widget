@@ -1,4 +1,5 @@
 import React from 'react';
+import { Music2 } from 'lucide-react';
 import { useCreateWidget } from '../hooks/useCreateWidget';
 import { WidgetPreview } from './WidgetPreview';
 import { WidgetForm } from './WidgetForm';
@@ -8,7 +9,7 @@ import { useWidgetForm } from '../hooks/useWidgetForm';
 
 export default function WidgetMaker() {
   const { mutate: createWidget, data: widgetData, isLoading, isSuccess } = useCreateWidget();
-  const { config, updateConfig, handleSubmit } = useWidgetForm({
+  const { config, updateConfig, handleSubmit, errors } = useWidgetForm({
     onSubmit: createWidget,
   });
 
@@ -17,10 +18,10 @@ export default function WidgetMaker() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <div className="w-48 h-48 mx-auto mb-6 bg-brand-blue rounded-2xl p-4">
+          <div className="w-32 h-32 mx-auto mb-6 bg-brand-blue rounded-2xl p-4">
             <Logo className="drop-shadow-lg" />
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
@@ -31,14 +32,20 @@ export default function WidgetMaker() {
           </p>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-2">
-          <WidgetForm 
-            config={config}
-            onConfigChange={updateConfig}
-            onSubmit={handleSubmit}
-            isLoading={isLoading}
-          />
-          <WidgetPreview config={config} />
+        <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex-1">
+            <WidgetForm 
+              config={config}
+              onConfigChange={updateConfig}
+              onSubmit={handleSubmit}
+              isLoading={isLoading}
+              errors={errors}
+            />
+          </div>
+          
+          <div className="lg:w-[480px] lg:flex-shrink-0 sticky top-8">
+            <WidgetPreview config={config} />
+          </div>
         </div>
       </div>
     </div>
