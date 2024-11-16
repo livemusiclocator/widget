@@ -10,8 +10,9 @@
             margin: 40px auto;
             padding: 20px;
             font-family: system-ui, -apple-system, sans-serif;
+            line-height: 1.5;
         }
-        .widget {
+        .widget-container {
             margin: 20px 0;
             border: 1px solid #eee;
             padding: 20px;
@@ -22,28 +23,88 @@
             padding: 15px;
             border-radius: 4px;
             overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        h2 {
+            color: #333;
+            margin-top: 2em;
+        }
+        .description {
+            color: #666;
+            margin-bottom: 1em;
         }
     </style>
 </head>
 <body>
-    <h1>Widget Test Page</h1>
+    <h1>Live Music Locator Widget Test Page</h1>
     
-    <div class="widget">
+    <div class="description">
+        This page demonstrates different configurations of the Live Music Locator widget.
+    </div>
+
+    <h2>Basic Widget (Melbourne, Tonight)</h2>
+    <div class="widget-container">
         <iframe 
-            src="https://livemusiclocator.github.io/widget/"
+            src="https://livemusiclocator.github.io/widget/widget.html?location=melbourne&timeFrame=tonight&range=2&depth=3&width=400&design=minimal&showArtistName=true&showVenue=true&showTime=true&showPrice=true&showGenre=true"
             width="400" 
             height="600" 
             frameborder="0"
-            title="Live Music Locator Widget">
+            title="Live Music Locator Widget - Melbourne">
         </iframe>
     </div>
 
     <pre><code>&lt;iframe 
-    src="https://livemusiclocator.github.io/widget/"
+    src="https://livemusiclocator.github.io/widget/widget.html?location=melbourne&timeFrame=tonight&range=2&depth=3&width=400&design=minimal&showArtistName=true&showVenue=true&showTime=true&showPrice=true&showGenre=true"
     width="400" 
     height="600" 
     frameborder="0"
-    title="Live Music Locator Widget"&gt;
+    title="Live Music Locator Widget - Melbourne"&gt;
 &lt;/iframe&gt;</code></pre>
+
+    <h2>Detailed Style (Weekend Gigs)</h2>
+    <div class="widget-container">
+        <iframe 
+            src="https://livemusiclocator.github.io/widget/widget.html?location=melbourne&timeFrame=weekend&range=5&depth=5&width=400&design=detailed&showArtistName=true&showVenue=true&showTime=true&showPrice=true&showGenre=true"
+            width="400" 
+            height="600" 
+            frameborder="0"
+            title="Live Music Locator Widget - Weekend">
+        </iframe>
+    </div>
+
+    <pre><code>&lt;iframe 
+    src="https://livemusiclocator.github.io/widget/widget.html?location=melbourne&timeFrame=weekend&range=5&depth=5&width=400&design=detailed&showArtistName=true&showVenue=true&showTime=true&showPrice=true&showGenre=true"
+    width="400" 
+    height="600" 
+    frameborder="0"
+    title="Live Music Locator Widget - Weekend"&gt;
+&lt;/iframe&gt;</code></pre>
+
+    <h2>Minimal Configuration</h2>
+    <div class="widget-container">
+        <iframe 
+            src="https://livemusiclocator.github.io/widget/widget.html?location=melbourne&timeFrame=tonight&range=1&depth=3&width=400&design=minimal&showArtistName=true&showVenue=true&showTime=false&showPrice=false&showGenre=false"
+            width="400" 
+            height="600" 
+            frameborder="0"
+            title="Live Music Locator Widget - Minimal">
+        </iframe>
+    </div>
+
+    <pre><code>&lt;iframe 
+    src="https://livemusiclocator.github.io/widget/widget.html?location=melbourne&timeFrame=tonight&range=1&depth=3&width=400&design=minimal&showArtistName=true&showVenue=true&showTime=false&showPrice=false&showGenre=false"
+    width="400" 
+    height="600" 
+    frameborder="0"
+    title="Live Music Locator Widget - Minimal"&gt;
+&lt;/iframe&gt;</code></pre>
+
+    <footer style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; text-align: center;">
+        <p>
+            <a href="https://lml.live" target="_blank" rel="noopener noreferrer" style="color: #00B4E5; text-decoration: none;">
+                Powered by Live Music Locator
+            </a>
+        </p>
+    </footer>
 </body>
 </html>
