@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { MapPin, Crosshair } from 'lucide-react';
 
-// Predefined ranges in meters
+// Predefined ranges in kilometers
 export const DISTANCE_RANGES = [
   { label: '200m', value: 0.2 },
   { label: '500m', value: 0.5 },
   { label: '1km', value: 1 },
   { label: '2km', value: 2 },
-  { label: 'Custom', value: 'custom' }
+  { label: '5km', value: 5 },
+  { label: 'Unlimited', value: 100 } // Using 100km as effectively unlimited for urban areas
 ] as const;
 
 interface LocationInputProps {
@@ -21,8 +22,6 @@ interface LocationInputProps {
 export function LocationInput({ value, range, onChange, onRangeChange, error }: LocationInputProps) {
   const [isGettingLocation, setIsGettingLocation] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [customRange, setCustomRange] = useState<number>(5);
-  const [showCustomRange, setShowCustomRange] = useState(false);
 
   const getCurrentLocation = () => {
     setIsGettingLocation(true);
@@ -42,20 +41,8 @@ export function LocationInput({ value, range, onChange, onRangeChange, error }: 
   };
 
   const handleRangeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedValue = e.target.value;
-    if (selectedValue === 'custom') {
-      setShowCustomRange(true);
-      onRangeChange(customRange);
-    } else {
-      setShowCustomRange(false);
-      onRangeChange(parseFloat(selectedValue));
-    }
-  };
-
-  const handleCustomRangeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value);
-    setCustomRange(value);
-    onRangeChange(value);
+    const selectedValue = parseFloat(e.target.value);
+    onRangeChange(selectedValue);
   };
 
   return (
@@ -94,7 +81,7 @@ export function LocationInput({ value, range, onChange, onRangeChange, error }: 
           Search Range
         </label>
         <select
-          value={showCustomRange ? 'custom' : range}
+          value={range}
           onChange={handleRangeChange}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-blue focus:ring-brand-blue sm:text-sm"
         >
@@ -104,21 +91,6 @@ export function LocationInput({ value, range, onChange, onRangeChange, error }: 
             </option>
           ))}
         </select>
-
-        {showCustomRange && (
-          <div className="mt-2">
-            <input
-              type="number"
-              min="0.1"
-              max="100"
-              step="0.1"
-              value={customRange}
-              onChange={handleCustomRangeChange}
-              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-blue focus:ring-brand-blue sm:text-sm"
-              placeholder="Enter distance in km"
-            />
-          </div>
-        )}
       </div>
     </div>
   );

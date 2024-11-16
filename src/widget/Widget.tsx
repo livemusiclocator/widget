@@ -80,6 +80,10 @@ export function Widget({ config }: { config: WidgetConfig }) {
     );
   }
 
+  const rangeDisplay = config.range >= 100 ? 'All gigs' : 
+    config.range < 1 ? `${(config.range * 1000).toFixed(0)}m radius` : 
+    `${config.range}km radius`;
+
   return (
     <div className={`p-4 ${config.design === 'minimal' ? 'bg-white' : 'bg-gray-50'}`}>
       <div className="flex items-center justify-between mb-4">
@@ -88,9 +92,7 @@ export function Widget({ config }: { config: WidgetConfig }) {
         </h2>
         <span className="text-sm text-brand-blue flex items-center gap-1">
           <MapPin className="w-4 h-4" /> 
-          {typeof config.range === 'number' ? 
-            `${config.range < 1 ? config.range * 1000 + 'm' : config.range + 'km'} radius` 
-            : '10km radius'}
+          {rangeDisplay}
         </span>
       </div>
 
