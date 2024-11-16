@@ -7,8 +7,18 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: 'index.html',
-        widget: 'gigwidget.html',
+        widget: 'gigwidget.html'
       },
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', '@tanstack/react-query'],
+          widget: ['./src/widget/index.tsx']
+        }
+      }
     },
-  },
+    outDir: 'dist',
+    assetsDir: 'assets',
+    // Ensure assets use relative paths
+    base: './'
+  }
 });
