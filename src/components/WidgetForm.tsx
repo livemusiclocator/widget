@@ -1,20 +1,19 @@
 import React from 'react';
-import { Music2, Mail, Building2, MapPin, Layout, Calendar, Ruler, Settings2 } from 'lucide-react';
-import { useWidgetForm } from '../hooks/useWidgetForm';
-import type { WidgetConfig } from '../widget/types';
+import { Music2, Mail, Building2, Layout, Calendar, Settings2, Sliders } from 'lucide-react';
+import { LocationInput } from './LocationInput';
+import type { WidgetConfig } from '../types';
 
 interface WidgetFormProps {
-  onSubmit: (config: WidgetConfig) => void;
+  config: WidgetConfig;
+  onConfigChange: (updates: Partial<WidgetConfig>) => void;
+  onSubmit: (e: React.FormEvent) => void;
   isLoading: boolean;
+  errors?: Record<string, string>;
 }
 
-export function WidgetForm({ onSubmit, isLoading }: WidgetFormProps) {
-  const { config, updateConfig, handleSubmit } = useWidgetForm({
-    onSubmit,
-  });
-
+export function WidgetForm({ config, onConfigChange, onSubmit, isLoading, errors = {} }: WidgetFormProps) {
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-lg p-8 border border-gray-200">
+    <form onSubmit={onSubmit} className="bg-white rounded-xl shadow-lg p-8 border border-gray-200">
       <div className="space-y-6">
         <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
           <Settings2 className="w-5 h-5 text-brand-blue" />
@@ -22,62 +21,78 @@ export function WidgetForm({ onSubmit, isLoading }: WidgetFormProps) {
         </h2>
         
         <div className="space-y-4">
+          {/* Basic Info */}
           <div>
             <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
               <Music2 className="w-4 h-4 text-brand-blue" />
-              Widget Name
+              Widget Name *
             </label>
             <input
               type="text"
               value={config.name}
-              onChange={(e) => updateConfig({ name: e.target.value })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-blue focus:ring-brand-blue sm:text-sm"
+              onChange={(e) => onConfigChange({ name: e.target.value })}
+              className={`
+                mt-1 block w-full rounded-md shadow-sm sm:text-sm
+                ${errors.name 
+                  ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300 focus:border-brand-blue focus:ring-brand-blue'
+                }
+              `}
               placeholder="My Gig Widget"
             />
+            {errors.name && (
+              <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+            )}
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
               <Mail className="w-4 h-4 text-brand-blue" />
-              Email
+              Email *
             </label>
             <input
               type="email"
               value={config.email}
-              onChange={(e) => updateConfig({ email: e.target.value })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-blue focus:ring-brand-blue sm:text-sm"
+              onChange={(e) => onConfigChange({ email: e.target.value })}
+              className={`
+                mt-1 block w-full rounded-md shadow-sm sm:text-sm
+                ${errors.email 
+                  ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300 focus:border-brand-blue focus:ring-brand-blue'
+                }
+              `}
               placeholder="your@email.com"
             />
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+            )}
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
               <Building2 className="w-4 h-4 text-brand-blue" />
-              Organization (Optional)
+              Organization
             </label>
             <input
               type="text"
               value={config.organization}
-              onChange={(e) => updateConfig({ organization: e.target.value })}
+              onChange={(e) => onConfigChange({ organization: e.target.value })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-blue focus:ring-brand-blue sm:text-sm"
               placeholder="Your Organization"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-brand-blue" />
-              Location
-            </label>
-            <input
-              type="text"
-              value={config.location}
-              onChange={(e) => updateConfig({ location: e.target.value })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-blue focus:ring-brand-blue sm:text-sm"
-              placeholder="Enter location"
-            />
-          </div>
+          <LocationInput
+            value={config.location}
+            range={config.range}
+            onChange={(location, coordinates) => 
+              onConfigChange({ location, coordinates })
+            }
+            onRangeChange={(range) => onConfigChange({ range })}
+            error={errors.location}
+          />
 
+          {/* Display Settings */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
@@ -86,7 +101,7 @@ export function WidgetForm({ onSubmit, isLoading }: WidgetFormProps) {
               </label>
               <select
                 value={config.depth}
-                onChange={(e) => updateConfig({ depth: parseInt(e.target.value) })}
+                onChange={(e) => onConfigChange({ depth: parseInt(e.target.value) })}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-blue focus:ring-brand-blue sm:text-sm"
               >
                 {[2, 3, 4, 5].map((n) => (
@@ -97,7 +112,7 @@ export function WidgetForm({ onSubmit, isLoading }: WidgetFormProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
-                <Ruler className="w-4 h-4 text-brand-blue" />
+                <Layout className="w-4 h-4 text-brand-blue" />
                 Widget Width
               </label>
               <input
@@ -105,7 +120,7 @@ export function WidgetForm({ onSubmit, isLoading }: WidgetFormProps) {
                 min="300"
                 max="800"
                 value={config.width}
-                onChange={(e) => updateConfig({ width: parseInt(e.target.value) })}
+                onChange={(e) => onConfigChange({ width: parseInt(e.target.value) })}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-blue focus:ring-brand-blue sm:text-sm"
               />
             </div>
@@ -118,7 +133,7 @@ export function WidgetForm({ onSubmit, isLoading }: WidgetFormProps) {
             </label>
             <select
               value={config.timeFrame}
-              onChange={(e) => updateConfig({ timeFrame: e.target.value as any })}
+              onChange={(e) => onConfigChange({ timeFrame: e.target.value as any })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-blue focus:ring-brand-blue sm:text-sm"
             >
               <option value="tonight">Tonight</option>
@@ -127,30 +142,19 @@ export function WidgetForm({ onSubmit, isLoading }: WidgetFormProps) {
             </select>
           </div>
 
+          {/* Display Elements */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-brand-blue" />
-              Range (miles)
+            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+              <Sliders className="w-4 h-4 text-brand-blue" />
+              Display Elements
             </label>
-            <input
-              type="number"
-              min="1"
-              max="100"
-              value={config.range}
-              onChange={(e) => updateConfig({ range: parseInt(e.target.value) })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-blue focus:ring-brand-blue sm:text-sm"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Display Elements</label>
             <div className="space-y-2">
               {Object.entries(config.displayElements).map(([key, value]) => (
                 <label key={key} className="flex items-center">
                   <input
                     type="checkbox"
                     checked={value}
-                    onChange={(e) => updateConfig({
+                    onChange={(e) => onConfigChange({
                       displayElements: {
                         ...config.displayElements,
                         [key]: e.target.checked,
@@ -166,6 +170,7 @@ export function WidgetForm({ onSubmit, isLoading }: WidgetFormProps) {
             </div>
           </div>
 
+          {/* Design Style */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Design Style</label>
             <div className="grid grid-cols-2 gap-4">
@@ -185,7 +190,7 @@ export function WidgetForm({ onSubmit, isLoading }: WidgetFormProps) {
                     name="design"
                     value={style}
                     checked={config.design === style}
-                    onChange={(e) => updateConfig({ design: e.target.value as any })}
+                    onChange={(e) => onConfigChange({ design: e.target.value as any })}
                     className="sr-only"
                   />
                   <span className="capitalize">{style}</span>
@@ -198,11 +203,17 @@ export function WidgetForm({ onSubmit, isLoading }: WidgetFormProps) {
 
       <button
         type="submit"
-        disabled={isLoading}
+        disabled={isLoading || Object.keys(errors).length > 0}
         className="mt-6 w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-blue hover:bg-brand-blue/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-blue transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isLoading ? 'Generating Widget...' : 'Generate Widget'}
       </button>
+
+      {Object.keys(errors).length > 0 && (
+        <p className="mt-2 text-sm text-red-600">
+          Please fix the errors above before generating the widget.
+        </p>
+      )}
     </form>
   );
 }

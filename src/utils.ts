@@ -1,4 +1,4 @@
-import type { WidgetConfig } from '../types';
+import type { WidgetConfig } from './types';
 
 export function parseWidgetConfig(): WidgetConfig {
   const params = new URLSearchParams(window.location.search);
