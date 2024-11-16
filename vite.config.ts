@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
+  base: '/', // This ensures assets are loaded from root path
   build: {
     rollupOptions: {
       input: {
@@ -18,7 +19,9 @@ export default defineConfig({
     },
     outDir: 'dist',
     assetsDir: 'assets',
-    // Ensure assets use relative paths
-    base: './'
+    // Generate assets with hash for cache busting
+    assetFileNames: 'assets/[name]-[hash][extname]',
+    chunkFileNames: 'assets/[name]-[hash].js',
+    entryFileNames: 'assets/[name]-[hash].js'
   }
 });

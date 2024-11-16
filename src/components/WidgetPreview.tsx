@@ -8,8 +8,7 @@ interface WidgetPreviewProps {
 }
 
 export function WidgetPreview({ config }: WidgetPreviewProps) {
-  const widgetId = `widget_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  const embedUrl = `https://livemusiclocator.github.io/widget/${widgetId}`;
+  const embedUrl = `https://lml.live/widget/${encodeURIComponent(config.location)}`;
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-200">
@@ -18,12 +17,12 @@ export function WidgetPreview({ config }: WidgetPreviewProps) {
         Live Preview
       </h2>
       
-      <div className="border border-gray-200 rounded-lg overflow-hidden">
+      <div className="border border-gray-200 rounded-lg overflow-hidden mb-6">
         <Widget config={config} />
       </div>
 
       <div className="mt-6">
-        <h3 className="text-sm font-medium text-gray-700 mb-2">Embed Code</h3>
+        <h3 className="text-sm font-medium text-gray-700 mb-2">Sample Embed Code</h3>
         <pre className="bg-gray-50 p-4 rounded-lg text-sm text-gray-800 overflow-x-auto">
           {`<iframe
   src="${embedUrl}"
