@@ -4,7 +4,7 @@ import { MapPin } from 'lucide-react';
 import { format } from 'date-fns';
 import { GigList } from './GigList';
 import { parseWidgetConfig } from './utils';
-import type { Gig } from './types';
+import type { Gig, WidgetConfig } from './types';
 
 async function fetchGigs(location: string, timeFrame: string): Promise<Gig[]> {
   const today = new Date();
@@ -39,8 +39,13 @@ async function fetchGigs(location: string, timeFrame: string): Promise<Gig[]> {
   return response.json();
 }
 
-export function Widget() {
-  const config = parseWidgetConfig();
+interface WidgetProps {
+  config?: WidgetConfig;
+}
+
+export function Widget({ config: propsConfig }: WidgetProps) {
+  // Only parse URL config if no props config is provided
+  const config = propsConfig || parseWidgetConfig();
 
   const { data: gigs, isLoading, error } = useQuery({
     queryKey: ['gigs', config.location, config.timeFrame],
@@ -73,7 +78,7 @@ export function Widget() {
 
   return (
     <div className="lml-widget lml-widget-container">
-      <div className={`${config.design === 'minimal' ? 'bg-white' : 'bg-gray-50'} p-4 rounded-lg shadow-sm`}>
+      <div className={`${config.design === 'minimal' ? 'bg-white' : 'bg-gray-50'} p-4 rounded-lg`}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900">
             {timeFrameText}
@@ -83,10 +88,12 @@ export function Widget() {
           </span>
         </div>
 
-        <GigList 
-          gigs={gigs || []} 
-          config={config}
-        />
+        <div className="overflow-y-auto max-h-[500px]">
+          <GigList 
+            gigs={gigs || []} 
+            config={config}
+          />
+        </div>
 
         <div className="mt-4 text-center">
           <a 

@@ -1,13 +1,16 @@
 import React from 'react';
-import { Music2, Mail, Building2, MapPin, Layout, Calendar, Ruler, Settings2 } from 'lucide-react';
 import { useCreateWidget } from '../hooks/useCreateWidget';
 import { WidgetPreview } from './WidgetPreview';
 import { WidgetForm } from './WidgetForm';
 import { WidgetSuccess } from './WidgetSuccess';
 import { Logo } from './Logo';
+import { useWidgetForm } from '../hooks/useWidgetForm';
 
 export default function WidgetMaker() {
   const { mutate: createWidget, data: widgetData, isLoading, isSuccess } = useCreateWidget();
+  const { config, updateConfig, handleSubmit } = useWidgetForm({
+    onSubmit: createWidget,
+  });
 
   if (isSuccess && widgetData) {
     return <WidgetSuccess widgetData={widgetData} />;
@@ -15,7 +18,7 @@ export default function WidgetMaker() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <div className="w-48 h-48 mx-auto mb-6 bg-brand-blue rounded-2xl p-4">
             <Logo className="drop-shadow-lg" />
@@ -28,9 +31,14 @@ export default function WidgetMaker() {
           </p>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-2">
-          <WidgetForm onSubmit={createWidget} isLoading={isLoading} />
-          <WidgetPreview />
+        <div className="grid gap-8 lg:grid-cols-2">
+          <WidgetForm 
+            config={config}
+            onConfigChange={updateConfig}
+            onSubmit={handleSubmit}
+            isLoading={isLoading}
+          />
+          <WidgetPreview config={config} />
         </div>
       </div>
     </div>
