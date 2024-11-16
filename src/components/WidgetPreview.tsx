@@ -1,5 +1,5 @@
 import React from 'react';
-import { Music2 } from 'lucide-react';
+import { Music2, Copy, Check } from 'lucide-react';
 import { Widget } from '../widget/Widget';
 import type { WidgetConfig } from '../types';
 
@@ -8,7 +8,39 @@ interface WidgetPreviewProps {
 }
 
 export function WidgetPreview({ config }: WidgetPreviewProps) {
-  const embedUrl = `https://lml.live/widget/${encodeURIComponent(config.location)}`;
+  const [copied, setCopied] = React.useState(false);
+
+  // Create preview embed code
+  const params = new URLSearchParams({
+    location: config.location,
+    timeFrame: config.timeFrame,
+    range: config.range.toString(),
+    depth: config.depth.toString(),
+    width: config.width.toString(),
+    design: config.design,
+    ...Object.entries(config.displayElements).reduce((acc, [key, value]) => ({
+      ...acc,
+      [`show${key.charAt(0).toUpperCase() + key.slice(1)}`]: value.toString()
+    }), {}),
+    ...(config.coordinates ? {
+      lat: config.coordinates.lat.toString(),
+      lng: config.coordinates.lng.toString()
+    } : {})
+  });
+
+  const embedCode = `<iframe 
+  src="https://livemusiclocator.github.io/widget/widget/?${params.toString()}"
+  width="${config.width}"
+  height="600"
+  frameborder="0"
+  title="Live Music Locator Widget"
+></iframe>`;
+
+  const copyToClipboard = async () => {
+    await navigator.clipboard.writeText(embedCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-200">
@@ -22,15 +54,22 @@ export function WidgetPreview({ config }: WidgetPreviewProps) {
       </div>
 
       <div className="mt-6">
-        <h3 className="text-sm font-medium text-gray-700 mb-2">Sample Embed Code</h3>
-        <pre className="bg-gray-50 p-4 rounded-lg text-sm text-gray-800 overflow-x-auto">
-          {`<iframe
-  src="${embedUrl}"
-  width="${config.width}"
-  height="600"
-  frameborder="0"
-  title="Live Music Locator Widget"
-></iframe>`}
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-sm font-medium text-gray-700">Embed Code</h3>
+          <button
+            onClick={copyToClipboard}
+            className="p-2 rounded-md hover:bg-gray-100 transition-colors"
+            title="Copy embed code"
+          >
+            {copied ? (
+              <Check className="w-4 h-4 text-green-600" />
+            ) : (
+              <Copy className="w-4 h-4 text-gray-600" />
+            )}
+          </button>
+        </div>
+        <pre className="bg-gray-50 p-4 rounded-lg text-sm text-gray-800 overflow-x-auto whitespace-pre-wrap">
+          {embedCode}
         </pre>
       </div>
     </div>
