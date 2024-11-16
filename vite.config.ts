@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: '/', // This ensures assets are loaded from root path
+  base: '/widget/', // Match GitHub Pages repository name
   build: {
     rollupOptions: {
       input: {
@@ -16,12 +16,6 @@ export default defineConfig({
           widget: ['./src/widget/index.tsx']
         }
       }
-    },
-    outDir: 'dist',
-    assetsDir: 'assets',
-    // Generate assets with hash for cache busting
-    assetFileNames: 'assets/[name]-[hash][extname]',
-    chunkFileNames: 'assets/[name]-[hash].js',
-    entryFileNames: 'assets/[name]-[hash].js'
+    }
   }
 });
