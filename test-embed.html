@@ -19,24 +19,100 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             margin-top: 20px;
         }
-        h1 {
+        h1, h2 {
             color: #333;
             margin-bottom: 20px;
+        }
+        .widget-container {
+            margin: 20px 0;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+        }
+        .code-block {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+            border: 1px solid #e5e7eb;
+        }
+        ol {
+            line-height: 1.6;
+        }
+        .copy-button {
+            background: #00B4E5;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .copy-button:hover {
+            background: #0095c0;
         }
     </style>
 </head>
 <body>
-    <h1>Widget Embed Test Page</h1>
+    <h1>Widget Embed Test</h1>
     
     <div class="container">
-        <!-- Replace YOUR_WIDGET_ID with the actual widget ID from the generated embed code -->
-        <iframe 
-            src="https://lml.live/widget/embed/YOUR_WIDGET_ID" 
-            width="400" 
-            height="500" 
-            frameborder="0"
-            title="Live Music Locator Widget">
-        </iframe>
+        <h2>Live Preview</h2>
+        <div class="widget-container">
+            <iframe 
+                src="https://livemusiclocator.github.io/widget/"
+                width="400" 
+                height="600" 
+                frameborder="0"
+                title="Live Music Locator Widget">
+            </iframe>
+        </div>
+
+        <h2>Embed Code</h2>
+        <div class="code-block">
+&lt;iframe 
+    src="https://livemusiclocator.github.io/widget/"
+    width="400" 
+    height="600" 
+    frameborder="0"
+    title="Live Music Locator Widget"&gt;
+&lt;/iframe&gt;
+        </div>
+        <button class="copy-button" onclick="copyEmbedCode()">Copy Embed Code</button>
     </div>
+
+    <div class="container">
+        <h2>Instructions</h2>
+        <ol>
+            <li>Copy the embed code above using the Copy button</li>
+            <li>Paste it into your website's HTML where you want the widget to appear</li>
+            <li>Adjust the width and height attributes as needed for your layout</li>
+            <li>The widget will automatically load live music events for your area</li>
+        </ol>
+    </div>
+
+    <script>
+        function copyEmbedCode() {
+            const code = `<iframe 
+    src="https://livemusiclocator.github.io/widget/"
+    width="400" 
+    height="600" 
+    frameborder="0"
+    title="Live Music Locator Widget">
+</iframe>`;
+            navigator.clipboard.writeText(code)
+                .then(() => {
+                    const button = document.querySelector('.copy-button');
+                    button.textContent = 'Copied!';
+                    setTimeout(() => {
+                        button.textContent = 'Copy Embed Code';
+                    }, 2000);
+                });
+        }
+    </script>
 </body>
 </html>
