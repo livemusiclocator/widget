@@ -1,8 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { MapPin, Clock, Tag, Ticket } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
-import type { Gig } from './types';
 import type { WidgetConfig } from '../types';
 import { GigList } from './GigList';
 
@@ -12,20 +11,23 @@ async function fetchGigs(location: string, timeFrame: string) {
   
   switch (timeFrame) {
     case 'tomorrow':
-      dateTo = format(parseISO(today).setDate(parseISO(today).getDate() + 1), 'yyyy-MM-dd');
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      dateTo = format(tomorrow, 'yyyy-MM-dd');
       break;
     case 'weekend':
-      // Calculate next weekend
-      const dayOfWeek = parseISO(today).getDay();
-      const daysUntilWeekend = dayOfWeek <= 5 ? 5 - dayOfWeek : 6;
-      dateTo = format(parseISO(today).setDate(parseISO(today).getDate() + daysUntilWeekend + 1), 'yyyy-MM-dd');
+      const now = new Date();
+      const daysUntilWeekend = 5 - now.getDay(); // Friday
+      const weekend = new Date();
+      weekend.setDate(now.getDate() + daysUntilWeekend);
+      dateTo = format(weekend, 'yyyy-MM-dd');
       break;
   }
 
   const response = await fetch(
     `https://api.lml.live/gigs/query?location=${encodeURIComponent(location)}&date_from=${today}&date_to=${dateTo}`
   );
-  
+
   if (!response.ok) {
     throw new Error('Failed to fetch gigs');
   }
@@ -37,7 +39,7 @@ export function Widget({ config }: { config: WidgetConfig }) {
   const { data: gigs, isLoading, error } = useQuery({
     queryKey: ['gigs', config.location, config.timeFrame, config.range],
     queryFn: () => fetchGigs(config.location, config.timeFrame),
-    staleTime: 5 * 60 * 1000,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
     refetchOnWindowFocus: false,
   });
 
@@ -93,7 +95,7 @@ export function Widget({ config }: { config: WidgetConfig }) {
       </div>
 
       <GigList 
-        gigs={gigs} 
+        gigs={gigs.slice(0, config.depth)} 
         config={config}
         userLocation={config.coordinates ? 
           { lat: config.coordinates.lat, lon: config.coordinates.lng } : 

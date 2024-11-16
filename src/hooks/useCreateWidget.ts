@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import type { WidgetConfig } from '../widget/types';
+import type { WidgetConfig } from '../types';
 
 interface CreateWidgetResponse {
   widgetId: string;
@@ -10,11 +10,12 @@ interface CreateWidgetResponse {
 export function useCreateWidget() {
   return useMutation({
     mutationFn: async (config: WidgetConfig) => {
-      // Since we're using GitHub Pages (static hosting), we'll simulate the API response
-      // In a production environment, you'd want to use a real backend service
       const widgetId = `widget_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      const embedCode = `<iframe src="https://${window.location.hostname}/widget/${widgetId}" width="${config.width}" height="500" frameborder="0"></iframe>`;
+      const embedUrl = `https://livemusiclocator.github.io/widget/${widgetId}`;
+      const embedCode = `<iframe src="${embedUrl}" width="${config.width}" height="600" frameborder="0" title="Live Music Locator Widget"></iframe>`;
 
+      // In production, you'd save the config to a backend service
+      // For now, we'll just return the widget details
       return {
         widgetId,
         embedCode,
