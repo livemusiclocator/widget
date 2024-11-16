@@ -3,5 +3,8 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: 'https://lml.live/widget/',
+  base: '/widget/',
+  optimizeDeps: {
+    exclude: ['lucide-react'],
+  },
 });
