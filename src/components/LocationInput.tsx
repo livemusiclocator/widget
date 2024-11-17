@@ -18,7 +18,7 @@ interface LocationInputProps {
   error?: string;
 }
 
-export function LocationInput({ range, onChange, onRangeChange, error }: LocationInputProps) {
+export function LocationInput({ value, range, onChange, onRangeChange, error }: LocationInputProps) {
   const [isGettingLocation, setIsGettingLocation] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
 

@@ -7,7 +7,7 @@ interface WidgetFormProps {
   config: WidgetConfig;
   onConfigChange: (updates: Partial<WidgetConfig>) => void;
   onSubmit: (e: React.FormEvent) => void;
-  isLoading: boolean;
+  isLoading?: boolean;
   errors?: Record<string, string>;
 }
 
@@ -137,7 +137,7 @@ export function WidgetForm({ config, onConfigChange, onSubmit, isLoading, errors
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-blue focus:ring-brand-blue sm:text-sm"
             >
               <option value="tonight">Tonight</option>
-              <option value="tomorrow">Today and Tomorrow</option>
+              <option value="tomorrow">Tomorrow</option>
               <option value="weekend">Through Weekend</option>
             </select>
           </div>

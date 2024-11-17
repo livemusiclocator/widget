@@ -1,5 +1,3 @@
-import logo from '../assets/logo.png';
-
 interface LogoProps {
   className?: string;
 }
@@ -7,7 +5,7 @@ interface LogoProps {
 export function Logo({ className = '' }: LogoProps) {
   return (
     <img 
-      src={logo}
+      src="/logo.png"
       alt="Live Music Locator" 
       className={`w-full h-full object-contain ${className}`}
     />

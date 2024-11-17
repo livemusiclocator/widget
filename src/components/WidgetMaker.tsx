@@ -7,7 +7,7 @@ import { useWidgetForm } from '../hooks/useWidgetForm';
 
 export function WidgetMaker() {
   const { mutate: createWidget, data: widgetData, isSuccess } = useCreateWidget();
-  const { config, updateConfig, handleSubmit, errors } = useWidgetForm({
+  const { config, updateConfig, handleSubmit, errors, isLoading } = useWidgetForm({
     onSubmit: createWidget
   });
 
@@ -37,6 +37,7 @@ export function WidgetMaker() {
               onConfigChange={updateConfig}
               onSubmit={handleSubmit}
               errors={errors}
+              isLoading={isLoading}
             />
           </div>
           

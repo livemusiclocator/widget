@@ -29,11 +29,11 @@ export function useCreateWidget() {
         } : {})
       });
 
-      // Use the production domain with correct path
-      const embedUrl = `https://lml.live/widget/?${params.toString()}`;
+      // Use the GitHub Pages URL for the widget
+      const widgetUrl = `https://livemusiclocator.github.io/widget/widget?${params.toString()}`;
 
       const embedCode = `<iframe 
-  src="${embedUrl}"
+  src="${widgetUrl}"
   width="${config.width}"
   height="600"
   frameborder="0"
