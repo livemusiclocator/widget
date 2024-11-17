@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { MapPin, Crosshair } from 'lucide-react';
 
-// Predefined ranges in kilometers
 export const DISTANCE_RANGES = [
   { label: '200m', value: 0.2 },
   { label: '500m', value: 0.5 },
@@ -12,14 +11,14 @@ export const DISTANCE_RANGES = [
 ] as const;
 
 interface LocationInputProps {
-  location: string;
+  value: string;
   range: number;
   onChange: (location: string, coordinates: { lat: number; lng: number }) => void;
   onRangeChange: (range: number) => void;
   error?: string;
 }
 
-export function LocationInput({ location, range, onChange, onRangeChange, error }: LocationInputProps) {
+export function LocationInput({ range, onChange, onRangeChange, error }: LocationInputProps) {
   const [isGettingLocation, setIsGettingLocation] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
 
@@ -38,11 +37,6 @@ export function LocationInput({ location, range, onChange, onRangeChange, error 
         setIsGettingLocation(false);
       }
     );
-  };
-
-  const handleRangeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedValue = parseFloat(e.target.value);
-    onRangeChange(selectedValue);
   };
 
   return (
@@ -82,7 +76,7 @@ export function LocationInput({ location, range, onChange, onRangeChange, error 
         </label>
         <select
           value={range}
-          onChange={handleRangeChange}
+          onChange={(e) => onRangeChange(parseFloat(e.target.value))}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-blue focus:ring-brand-blue sm:text-sm"
         >
           {DISTANCE_RANGES.map(({ label, value }) => (

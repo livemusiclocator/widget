@@ -1,11 +1,10 @@
-import { type FC } from 'react';
 import logo from '../assets/logo.png';
 
 interface LogoProps {
   className?: string;
 }
 
-export const Logo: FC<LogoProps> = ({ className = '' }) => {
+export function Logo({ className = '' }: LogoProps) {
   return (
     <img 
       src={logo}
@@ -13,4 +12,4 @@ export const Logo: FC<LogoProps> = ({ className = '' }) => {
       className={`w-full h-full object-contain ${className}`}
     />
   );
-};
+}

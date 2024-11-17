@@ -1,4 +1,3 @@
-import { type FC } from 'react';
 import { useCreateWidget } from '../hooks/useCreateWidget';
 import { WidgetPreview } from './WidgetPreview';
 import { WidgetForm } from './WidgetForm';
@@ -6,10 +5,10 @@ import { WidgetSuccess } from './WidgetSuccess';
 import { Logo } from './Logo';
 import { useWidgetForm } from '../hooks/useWidgetForm';
 
-export const WidgetMaker: FC = () => {
+export function WidgetMaker() {
   const { mutate: createWidget, data: widgetData, isSuccess } = useCreateWidget();
-  const { config, updateConfig, handleSubmit } = useWidgetForm({
-    onSubmit: (config) => createWidget(config)
+  const { config, updateConfig, handleSubmit, errors } = useWidgetForm({
+    onSubmit: createWidget
   });
 
   if (isSuccess && widgetData) {
@@ -37,7 +36,7 @@ export const WidgetMaker: FC = () => {
               config={config}
               onConfigChange={updateConfig}
               onSubmit={handleSubmit}
-              isLoading={false}
+              errors={errors}
             />
           </div>
           
@@ -48,4 +47,4 @@ export const WidgetMaker: FC = () => {
       </div>
     </div>
   );
-};
+}

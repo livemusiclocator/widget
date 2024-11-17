@@ -1,7 +1,5 @@
 import { WidgetMaker } from './components/WidgetMaker';
 
-function App() {
+export default function App() {
   return <WidgetMaker />;
 }
-
-export default App;
