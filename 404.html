@@ -4,8 +4,14 @@
   <meta charset="utf-8">
   <title>Live Music Locator Widget</title>
   <script>
-    sessionStorage.redirect = location.href;
-    location.replace('/widget/');
+    const path = window.location.pathname;
+    if (path.includes('/maker')) {
+      window.location.replace('/widget/maker.html');
+    } else if (path.includes('/widget')) {
+      window.location.replace('/widget/widget.html');
+    } else {
+      window.location.replace('/widget/');
+    }
   </script>
 </head>
 <body>
