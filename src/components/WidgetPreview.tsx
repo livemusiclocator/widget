@@ -1,5 +1,5 @@
 import React from 'react';
-import { Music2, Copy, Check } from 'lucide-react';
+import { Music2, Copy, Check, ExternalLink } from 'lucide-react';
 import { Widget } from '../widget/Widget';
 import type { WidgetConfig } from '../types';
 
@@ -10,7 +10,7 @@ interface WidgetPreviewProps {
 export function WidgetPreview({ config }: WidgetPreviewProps) {
   const [copied, setCopied] = React.useState(false);
 
-  // Create preview embed code
+  // Create preview URL and embed code
   const params = new URLSearchParams({
     location: config.location,
     timeFrame: config.timeFrame,
@@ -28,8 +28,9 @@ export function WidgetPreview({ config }: WidgetPreviewProps) {
     } : {})
   });
 
+  const widgetUrl = `https://lml.live/widget/?${params.toString()}`;
   const embedCode = `<iframe 
-  src="https://lml.live/widget/widget/?${params.toString()}"
+  src="${widgetUrl}"
   width="${config.width}"
   height="600"
   frameborder="0"
@@ -44,10 +45,21 @@ export function WidgetPreview({ config }: WidgetPreviewProps) {
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-200">
-      <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2 mb-6">
-        <Music2 className="w-5 h-5 text-brand-blue" />
-        Live Preview
-      </h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+          <Music2 className="w-5 h-5 text-brand-blue" />
+          Live Preview
+        </h2>
+        <a
+          href={widgetUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 px-3 py-1 text-sm font-medium text-brand-blue hover:bg-brand-blue/10 rounded-md transition-colors"
+        >
+          <ExternalLink className="w-4 h-4" />
+          View Widget
+        </a>
+      </div>
       
       <div className="border border-gray-200 rounded-lg overflow-hidden mb-6">
         <Widget config={config} />
