@@ -29,8 +29,8 @@ export function useCreateWidget() {
         } : {})
       });
 
-      // Use the GitHub Pages URL for the widget
-      const widgetUrl = `https://livemusiclocator.github.io/widget/widget?${params.toString()}`;
+      // Generate widget URL
+      const widgetUrl = `https://lml.live/widget/?${params.toString()}`;
 
       const embedCode = `<iframe 
   src="${widgetUrl}"
