@@ -2,18 +2,24 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Widget } from './Widget';
-import { parseWidgetConfig } from './utils';
 import './styles.css';
 
 const queryClient = new QueryClient();
 
-// Get widget configuration from URL parameters
-const config = parseWidgetConfig();
+// Get parameters from URL
+const params = new URLSearchParams(window.location.search);
+const location = params.get('location') || 'melbourne';
+const range = parseInt(params.get('range') || '10', 10);
+const maxGigs = parseInt(params.get('maxGigs') || '5', 10);
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <Widget config={config} />
+      <Widget 
+        location={location}
+        range={range}
+        maxGigs={maxGigs}
+      />
     </QueryClientProvider>
   </StrictMode>
 );
