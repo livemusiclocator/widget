@@ -17,19 +17,37 @@ function formatTime(time: string) {
 }
 
 export function GigList({ gigs, config, userLocation }: GigListProps) {
-  const filteredGigs = userLocation
-    ? gigs.filter(gig => {
-        const distance = calculateDistance(
-          userLocation.lat,
-          userLocation.lon,
-          gig.venue.latitude,
-          gig.venue.longitude
-        );
-        return distance <= config.range;
-      })
-    : gigs;
+  const filteredGigs = React.useMemo(() => {
+    if (!userLocation || !gigs.length) return gigs;
+    
+    return gigs.filter(gig => {
+      if (!gig.venue.latitude || !gig.venue.longitude) return false;
+      
+      const distance = calculateDistance(
+        userLocation.lat,
+        userLocation.lon,
+        gig.venue.latitude,
+        gig.venue.longitude
+      );
+      
+      // If range is 100 (unlimited), show all gigs
+      if (config.range >= 100) return true;
+      
+      // Convert range to km if it's in meters
+      const rangeInKm = config.range < 1 ? config.range : config.range;
+      return distance <= rangeInKm;
+    });
+  }, [gigs, userLocation, config.range]);
 
   const displayGigs = filteredGigs.slice(0, config.depth);
+
+  if (!displayGigs.length) {
+    return (
+      <div className="text-center p-4 text-gray-500">
+        No gigs found within {config.range < 1 ? `${config.range * 1000}m` : `${config.range}km`} of your location.
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
