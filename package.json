@@ -10,15 +10,15 @@
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
-    "clean": "rm -rf .DS_Store **/.DS_Store"
+    "clean": "rm -rf .DS_Store **/.DS_Store && git rm -rf --cached . && git add ."
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.24.1",
-    "@tailwindcss/forms": "^0.5.7",
-    "date-fns": "^3.3.1",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "@tanstack/react-query": "^5.24.1",
+    "@tailwindcss/forms": "^0.5.7",
+    "date-fns": "^3.3.1",
     "zod": "^3.22.4"
   },
   "devDependencies": {
