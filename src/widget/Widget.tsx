@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { GigList } from './Giglist';
+import { GigList } from './GigList';
 import type { WidgetConfig, Gig } from './types';
 import { format, addDays, startOfDay } from 'date-fns';
 

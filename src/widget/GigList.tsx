@@ -9,6 +9,10 @@ interface GigListProps {
   userLocation?: { lat: number; lon: number };
 }
 
+interface GigWithDistance extends Gig {
+  distance?: number | null;
+}
+
 function formatTime(time: string) {
   return new Date(`1970-01-01T${time}`).toLocaleTimeString('en-US', {
     hour: 'numeric',
@@ -30,7 +34,7 @@ export function GigList({ gigs, config, userLocation }: GigListProps) {
               gig.venue.longitude
             )
           : null;
-        return { ...gig, distance };
+        return { ...gig, distance } as GigWithDistance;
       })
       .filter(gig => {
         // If no coordinates or range is 100 (unlimited), include the gig
@@ -53,7 +57,7 @@ export function GigList({ gigs, config, userLocation }: GigListProps) {
 
   return (
     <div className="space-y-4">
-      {gigsWithDistance.map((gig) => (
+      {gigsWithDistance.map((gig: GigWithDistance) => (
         <div 
           key={gig.id}
           className={`
@@ -82,8 +86,7 @@ export function GigList({ gigs, config, userLocation }: GigListProps) {
                     <MapPin className="w-3 h-3" />
                     {gig.venue.name}
                   </a>
-                  {/* Show distance if available */}
-                  {'distance' in gig && gig.distance !== null && (
+                  {gig.distance !== undefined && gig.distance !== null && (
                     <p className="text-xs text-gray-500 mt-0.5 ml-4">
                       {gig.distance.toFixed(2)}km away
                       {gig.venue.latitude && gig.venue.longitude && (
