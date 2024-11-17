@@ -17,30 +17,33 @@ function formatTime(time: string) {
 }
 
 export function GigList({ gigs, config, userLocation }: GigListProps) {
-  const filteredGigs = React.useMemo(() => {
-    if (!userLocation || !gigs.length) return gigs;
-    
-    return gigs.filter(gig => {
-      // Skip gigs with missing venue coordinates
-      if (!gig.venue.latitude || !gig.venue.longitude) return false;
-      
-      const distance = calculateDistance(
-        userLocation.lat,
-        userLocation.lon,
-        gig.venue.latitude,
-        gig.venue.longitude
-      );
+  const gigsWithDistance = React.useMemo(() => {
+    if (!userLocation) return gigs;
 
-      // If range is 100, show all gigs (unlimited)
-      if (config.range >= 100) return true;
-      
-      return distance <= config.range;
-    });
+    return gigs
+      .map(gig => {
+        const distance = gig.venue.latitude && gig.venue.longitude
+          ? calculateDistance(
+              userLocation.lat,
+              userLocation.lon,
+              gig.venue.latitude,
+              gig.venue.longitude
+            )
+          : null;
+        return { ...gig, distance };
+      })
+      .filter(gig => {
+        // If no coordinates or range is 100 (unlimited), include the gig
+        if (!gig.distance || config.range >= 100) return true;
+        return gig.distance <= config.range;
+      })
+      .sort((a, b) => {
+        if (!a.distance || !b.distance) return 0;
+        return a.distance - b.distance;
+      });
   }, [gigs, userLocation, config.range]);
 
-  const displayGigs = filteredGigs.slice(0, config.depth);
-
-  if (!displayGigs.length) {
+  if (!gigsWithDistance.length) {
     return (
       <div className="text-center p-4 text-gray-500">
         No gigs found within {config.range < 1 ? `${config.range * 1000}m` : `${config.range}km`} of your location.
@@ -50,7 +53,7 @@ export function GigList({ gigs, config, userLocation }: GigListProps) {
 
   return (
     <div className="space-y-4">
-      {displayGigs.map((gig) => (
+      {gigsWithDistance.map((gig) => (
         <div 
           key={gig.id}
           className={`
@@ -69,15 +72,28 @@ export function GigList({ gigs, config, userLocation }: GigListProps) {
               )}
               
               {config.displayElements.venue && (
-                <a 
-                  href={gig.venue.location_url || '#'} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm text-gray-600 hover:text-brand-blue flex items-center gap-1 mt-1"
-                >
-                  <MapPin className="w-3 h-3" />
-                  {gig.venue.name}
-                </a>
+                <div>
+                  <a 
+                    href={gig.venue.location_url || '#'} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-sm text-gray-600 hover:text-brand-blue flex items-center gap-1 mt-1"
+                  >
+                    <MapPin className="w-3 h-3" />
+                    {gig.venue.name}
+                  </a>
+                  {/* Show distance if available */}
+                  {'distance' in gig && gig.distance !== null && (
+                    <p className="text-xs text-gray-500 mt-0.5 ml-4">
+                      {gig.distance.toFixed(2)}km away
+                      {gig.venue.latitude && gig.venue.longitude && (
+                        <span className="ml-1">
+                          ({gig.venue.latitude.toFixed(4)}, {gig.venue.longitude.toFixed(4)})
+                        </span>
+                      )}
+                    </p>
+                  )}
+                </div>
               )}
 
               {config.displayElements.time && (
