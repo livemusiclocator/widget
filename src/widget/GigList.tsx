@@ -131,6 +131,7 @@ export function GigList({ gigs, config, userLocation }: GigListProps) {
             )}
           </div>
         </div>
+        
       ))}
     </div>
   );
