@@ -29,7 +29,7 @@ export function WidgetPreview({ config }: WidgetPreviewProps) {
   });
 
   const embedCode = `<iframe 
-  src="https://livemusiclocator.github.io/widget/widget/?${params.toString()}"
+  src="https://lml.live/widget/widget/?${params.toString()}"
   width="${config.width}"
   height="600"
   frameborder="0"
