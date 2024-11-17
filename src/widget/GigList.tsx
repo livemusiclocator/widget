@@ -21,6 +21,7 @@ export function GigList({ gigs, config, userLocation }: GigListProps) {
     if (!userLocation || !gigs.length) return gigs;
     
     return gigs.filter(gig => {
+      // Skip gigs with missing venue coordinates
       if (!gig.venue.latitude || !gig.venue.longitude) return false;
       
       const distance = calculateDistance(
@@ -29,13 +30,11 @@ export function GigList({ gigs, config, userLocation }: GigListProps) {
         gig.venue.latitude,
         gig.venue.longitude
       );
-      
-      // If range is 100 (unlimited), show all gigs
+
+      // If range is 100, show all gigs (unlimited)
       if (config.range >= 100) return true;
       
-      // Convert range to km if it's in meters
-      const rangeInKm = config.range < 1 ? config.range : config.range;
-      return distance <= rangeInKm;
+      return distance <= config.range;
     });
   }, [gigs, userLocation, config.range]);
 
