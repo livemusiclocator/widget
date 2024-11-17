@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { MapPin, Crosshair } from 'lucide-react';
 
 // Predefined ranges in kilometers
@@ -8,18 +8,18 @@ export const DISTANCE_RANGES = [
   { label: '1km', value: 1 },
   { label: '2km', value: 2 },
   { label: '5km', value: 5 },
-  { label: 'Unlimited', value: 100 } // Using 100km as effectively unlimited for urban areas
+  { label: 'Unlimited', value: 100 }
 ] as const;
 
 interface LocationInputProps {
-  value: string;
+  location: string;
   range: number;
   onChange: (location: string, coordinates: { lat: number; lng: number }) => void;
   onRangeChange: (range: number) => void;
   error?: string;
 }
 
-export function LocationInput({ value, range, onChange, onRangeChange, error }: LocationInputProps) {
+export function LocationInput({ location, range, onChange, onRangeChange, error }: LocationInputProps) {
   const [isGettingLocation, setIsGettingLocation] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
 

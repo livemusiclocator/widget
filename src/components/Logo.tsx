@@ -1,13 +1,16 @@
-import React from 'react';
+import { type FC } from 'react';
+import logo from '../assets/logo.png';
 
-export function Logo({ className = '' }: { className?: string }) {
-  const logoUrl = new URL('/logo.png', import.meta.url).href;
-  
+interface LogoProps {
+  className?: string;
+}
+
+export const Logo: FC<LogoProps> = ({ className = '' }) => {
   return (
     <img 
-      src={logoUrl}
+      src={logo}
       alt="Live Music Locator" 
       className={`w-full h-full object-contain ${className}`}
     />
   );
-}
+};

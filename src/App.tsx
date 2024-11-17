@@ -1,5 +1,4 @@
-import React from 'react';
-import WidgetMaker from './components/WidgetMaker';
+import { WidgetMaker } from './components/WidgetMaker';
 
 function App() {
   return <WidgetMaker />;

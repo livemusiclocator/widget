@@ -1,5 +1,4 @@
-import React from 'react';
-import { Music2 } from 'lucide-react';
+import { type FC } from 'react';
 import { useCreateWidget } from '../hooks/useCreateWidget';
 import { WidgetPreview } from './WidgetPreview';
 import { WidgetForm } from './WidgetForm';
@@ -7,10 +6,10 @@ import { WidgetSuccess } from './WidgetSuccess';
 import { Logo } from './Logo';
 import { useWidgetForm } from '../hooks/useWidgetForm';
 
-export default function WidgetMaker() {
-  const { mutate: createWidget, data: widgetData, isLoading, isSuccess } = useCreateWidget();
-  const { config, updateConfig, handleSubmit, errors } = useWidgetForm({
-    onSubmit: createWidget,
+export const WidgetMaker: FC = () => {
+  const { mutate: createWidget, data: widgetData, isSuccess } = useCreateWidget();
+  const { config, updateConfig, handleSubmit } = useWidgetForm({
+    onSubmit: (config) => createWidget(config)
   });
 
   if (isSuccess && widgetData) {
@@ -38,8 +37,7 @@ export default function WidgetMaker() {
               config={config}
               onConfigChange={updateConfig}
               onSubmit={handleSubmit}
-              isLoading={isLoading}
-              errors={errors}
+              isLoading={false}
             />
           </div>
           
@@ -50,4 +48,4 @@ export default function WidgetMaker() {
       </div>
     </div>
   );
-}
+};
