@@ -10,8 +10,6 @@ interface CreateWidgetResponse {
 export function useCreateWidget() {
   return useMutation({
     mutationFn: async (config: WidgetConfig) => {
-      const widgetId = `widget_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
       // Create URL parameters from config
       const params = new URLSearchParams({
         location: config.location,
@@ -20,18 +18,19 @@ export function useCreateWidget() {
         depth: config.depth.toString(),
         width: config.width.toString(),
         design: config.design,
-        ...Object.entries(config.displayElements).reduce((acc, [key, value]) => ({
-          ...acc,
-          [`show${key.charAt(0).toUpperCase() + key.slice(1)}`]: value.toString()
-        }), {}),
+        showArtistName: config.displayElements.artistName.toString(),
+        showVenue: config.displayElements.venue.toString(),
+        showTime: config.displayElements.time.toString(),
+        showPrice: config.displayElements.price.toString(),
+        showGenre: config.displayElements.genre.toString(),
         ...(config.coordinates ? {
           lat: config.coordinates.lat.toString(),
           lng: config.coordinates.lng.toString()
         } : {})
       });
 
-      // Use the production domain
-      const embedUrl = `https://lml.live/widget/widget/?${params.toString()}`;
+      // Use the production domain with correct path
+      const embedUrl = `https://lml.live/widget/?${params.toString()}`;
 
       const embedCode = `<iframe 
   src="${embedUrl}"
@@ -42,10 +41,10 @@ export function useCreateWidget() {
 ></iframe>`;
 
       return {
-        widgetId,
+        widgetId: `widget_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         embedCode,
         config,
-      } as CreateWidgetResponse;
+      };
     },
   });
 }

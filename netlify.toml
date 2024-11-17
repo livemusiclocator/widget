@@ -4,8 +4,8 @@
   functions = "netlify/functions"
 
 [[redirects]]
-  from = "/assets/*"
-  to = "/assets/:splat"
+  from = "/widget"
+  to = "/gigwidget.html"
   status = 200
 
 [[redirects]]
