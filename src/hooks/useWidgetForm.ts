@@ -16,8 +16,6 @@ export function useWidgetForm({ onSubmit }: UseWidgetFormProps) {
       lat: 0,
       lng: 0
     },
-    depth: 3,
-    width: 400,
     timeFrame: 'tonight',
     range: 2,
     displayElements: {
@@ -27,7 +25,7 @@ export function useWidgetForm({ onSubmit }: UseWidgetFormProps) {
       price: false,
       genre: false,
     },
-    design: 'minimal',
+    design: 'website',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -35,7 +33,6 @@ export function useWidgetForm({ onSubmit }: UseWidgetFormProps) {
 
   const updateConfig = (updates: Partial<WidgetConfig>) => {
     setConfig(prev => ({ ...prev, ...updates }));
-    // Clear errors for updated fields
     const updatedFields = Object.keys(updates);
     if (updatedFields.length > 0) {
       setErrors(prev => {
