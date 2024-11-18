@@ -8,7 +8,6 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
         maker: resolve(__dirname, 'maker.html'),
         widget: resolve(__dirname, 'widget.html')
       }

@@ -9,10 +9,6 @@ interface GigListProps {
   userLocation?: { lat: number; lon: number };
 }
 
-interface GigWithDistance extends Gig {
-  distance?: number | null;
-}
-
 function formatTime(time: string) {
   return new Date(`1970-01-01T${time}`).toLocaleTimeString('en-US', {
     hour: 'numeric',
@@ -34,7 +30,7 @@ export function GigList({ gigs, config, userLocation }: GigListProps) {
               gig.venue.longitude
             )
           : null;
-        return { ...gig, distance } as GigWithDistance;
+        return { ...gig, distance };
       })
       .filter(gig => {
         // If no coordinates or range is 100 (unlimited), include the gig
@@ -57,14 +53,13 @@ export function GigList({ gigs, config, userLocation }: GigListProps) {
 
   return (
     <div className="space-y-4">
-      {gigsWithDistance.map((gig: GigWithDistance) => (
+      {gigsWithDistance.map((gig) => (
         <div 
           key={gig.id}
           className={`
-            ${config.design === 'minimal' 
-              ? 'border-t border-gray-100 pt-4 first:border-t-0 first:pt-0' 
-              : 'bg-white p-4 rounded-lg shadow-sm'
-            }
+            ${config.design === 'website' ? 'bg-white p-4 rounded-lg shadow-sm' : ''}
+            ${config.design === 'tablet' ? 'bg-white p-3 rounded-lg shadow-sm' : ''}
+            ${config.design === 'phone' ? 'border-t border-gray-100 pt-3 first:border-t-0 first:pt-0' : ''}
           `}
         >
           <div className="flex justify-between items-start gap-4">
@@ -86,14 +81,10 @@ export function GigList({ gigs, config, userLocation }: GigListProps) {
                     <MapPin className="w-3 h-3" />
                     {gig.venue.name}
                   </a>
-                  {gig.distance !== undefined && gig.distance !== null && (
+                  {/* Show distance if available */}
+                  {'distance' in gig && gig.distance !== null && (
                     <p className="text-xs text-gray-500 mt-0.5 ml-4">
                       {gig.distance.toFixed(2)}km away
-                      {gig.venue.latitude && gig.venue.longitude && (
-                        <span className="ml-1">
-                          ({gig.venue.latitude.toFixed(4)}, {gig.venue.longitude.toFixed(4)})
-                        </span>
-                      )}
                     </p>
                   )}
                 </div>
@@ -131,9 +122,7 @@ export function GigList({ gigs, config, userLocation }: GigListProps) {
             )}
           </div>
         </div>
-
       ))}
     </div>
   );
-  
 }

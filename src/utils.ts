@@ -1,4 +1,4 @@
-import type { WidgetConfig } from './types';
+import type { WidgetConfig } from './widget/types';
 
 export function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6371; // Earth's radius in km
@@ -24,10 +24,8 @@ export function parseWidgetConfig(): WidgetConfig {
       lat: parseFloat(params.get('lat') || '0'),
       lng: parseFloat(params.get('lng') || '0')
     },
-    depth: parseInt(params.get('depth') || '3', 10),
-    width: parseInt(params.get('width') || '400', 10),
     timeFrame: (params.get('timeFrame') as 'tonight' | 'tomorrow' | 'weekend') || 'tonight',
-    range: parseFloat(params.get('range') || '10'),
+    range: parseFloat(params.get('range') || '2'),
     displayElements: {
       artistName: params.get('showArtistName') !== 'false',
       venue: params.get('showVenue') !== 'false',
@@ -35,6 +33,6 @@ export function parseWidgetConfig(): WidgetConfig {
       price: params.get('showPrice') === 'true',
       genre: params.get('showGenre') === 'true'
     },
-    design: (params.get('design') as 'minimal' | 'detailed') || 'minimal'
+    design: (params.get('design') as 'tablet' | 'website' | 'phone') || 'website'
   };
 }
